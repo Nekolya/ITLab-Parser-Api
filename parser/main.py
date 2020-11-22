@@ -8,8 +8,8 @@ import json
 def parse_schedule():
     global Downloader
     try:
-        Downloader = Downloader(path_to_error_log='logs/downloadErrorLog.csv', base_file_dir='xls/')
-        Downloader.download()
+        # Downloader = Downloader(path_to_error_log='logs/downloadErrorLog.csv', base_file_dir='xls/')
+        # Downloader.download()
 
         reader = Reader(path_to_db="table.db")
         reader.run('xls', write_to_db=True, write_to_new_db=True, write_to_json_file=False, write_to_csv_file=False)
@@ -20,3 +20,6 @@ def parse_schedule():
 
     except Exception as err:
         print(err, "\n")
+
+if __name__ == "__main__":
+    parse_schedule()

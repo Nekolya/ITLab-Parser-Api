@@ -455,31 +455,33 @@ class Reader:
         if isinstance(temp_name, list):
             for item in temp_name:
                 if len(item) > 0:
+                    
                     if_except = re.search(r"(кр[. \w])", item, flags=re.A)
                     if_include = re.search(r"( н[. ])|(н[. ])|(\d\s\W)|(\d+\s+\D)", item, flags=re.A)
                     _except = ""
                     _include = ""
                     item = re.sub(r"\(", "", item, flags=re.A)
                     item = re.sub(r"\)", "", item, flags=re.A)
-                    if if_except:
-                        if re.search(r"\d+\s+-\d+\s+", item, flags=re.A):
-                            _except = if_diapason_week(item)
-                            item = re.sub(r"\d+\s+-\d+\s+", "", item, flags=re.A)
-                        else:
-                            _except = re.findall(r"(\d+)", item, flags=re.A)
-                        item = re.sub(r"(кр[. \w])", "", item, flags=re.A)
-                        item = re.sub(r"(\d+[,. н]+)", "", item, flags=re.A)
-                        name = re.sub(r"( н[. ])", "", item, flags=re.A)
-                    elif if_include:
-                        if re.search(r"\d+\s+-\d+\s+", item):
-                            _include = if_diapason_week(item)
-                            item = re.sub(r"\d+\s+-\d+\s+", "", item, flags=re.A)
-                        else:
-                            _include = re.findall(r"(\d+)", item, flags=re.A)
-                        item = re.sub(r"(\d+[;,. (?:н|нед)]+)", "", item, flags=re.A)
-                        name = re.sub(r"((?:н|нед)[. ])", "", item, flags=re.A)
-                    else:
-                        name = item
+                    # print(if_except, if_include,  "----------", item)
+                    # if if_except:
+                    #     if re.search(r"\d+\s+-\d+\s+", item, flags=re.A):
+                    #         _except = if_diapason_week(item)
+                    #         item = re.sub(r"\d+\s+-\d+\s+", "", item, flags=re.A)
+                    #     else:
+                    #         _except = re.findall(r"(\d+)", item, flags=re.A)
+                    #     item = re.sub(r"(кр[. \w])", "", item, flags=re.A)
+                    #     item = re.sub(r"(\d+[,. н]+)", "", item, flags=re.A)
+                    #     name = re.sub(r"( н[. ])", "", item, flags=re.A)
+                    # elif if_include:
+                    #     if re.search(r"\d+\s+-\d+\s+", item):
+                    #         _include = if_diapason_week(item)
+                    #         item = re.sub(r"\d+\s+-\d+\s+", "", item, flags=re.A)
+                    #     else:
+                    #         _include = re.findall(r"(\d+)", item, flags=re.A)
+                    #     item = re.sub(r"(\d+[;,. (?:н|нед)]+)", "", item, flags=re.A)
+                    #     name = re.sub(r"((?:н|нед)[. ])", "", item, flags=re.A)
+                    # else:
+                    name = item
                     # name = re.sub(r"  ", " ", name)
                     name = name.replace("  ", " ")
                     name = name.strip()
