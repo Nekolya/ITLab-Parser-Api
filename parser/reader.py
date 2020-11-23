@@ -439,7 +439,7 @@ class Reader:
         result = []
         temp_name = temp_name.replace(" ", "  ")
         temp_name = temp_name.replace(";", ";  ")
-
+        # print("1", temp_name)
         temp_name = re.sub(r"(\s+-\s+(?:лк|пр)(?:;|))", "", temp_name, flags=re.A)
         substr = re.findall(r"(\s+н(?:\.|)\s+)\d+", temp_name)
         if substr:
@@ -447,21 +447,23 @@ class Reader:
 
         temp_name = re.sub(r"(\d+)", r"\1 ", temp_name, flags=re.A)
         temp_name = re.sub(r"(кр\. {2,})", "кр.", temp_name, flags=re.A)
+
         temp_name = re.sub(r"((, *|)кроме {1,})", " кр.", temp_name, flags=re.A)
         temp_name = re.sub(r"(н[\d,. ]*[+;])", "", temp_name, flags=re.A)
-
-        temp_name = re.findall(r"((?:\s*[\W\s]*)(?:|кр[ .]\s*|\d+\s+-\d+\s+|[\d,. ]*)\s*\s*(?:|[\W\s]*|\D*)*)(?:\s\s|\Z|\n)",
+        temp_name = re.findall(r"((?:\s*[\W\s]*)(?:|кр[ .]\s*|\d+\s+-\d+\s+|[\d,. ]*)\s*\s*(?:|[\W\s]*|\D*)*\s*(?:|\(\d\s+п/г\)))(?:\s\s|\Z|\n)",
                                temp_name, flags=re.A)
+        # print("2", temp_name)
         if isinstance(temp_name, list):
             for item in temp_name:
                 if len(item) > 0:
                     
                     if_except = re.search(r"(кр[. \w])", item, flags=re.A)
                     if_include = re.search(r"( н[. ])|(н[. ])|(\d\s\W)|(\d+\s+\D)", item, flags=re.A)
+                    if_ex = re.search(r"(\d п/г)", item, flags=re.A)
                     _except = ""
                     _include = ""
-                    item = re.sub(r"\(", "", item, flags=re.A)
-                    item = re.sub(r"\)", "", item, flags=re.A)
+                    # item = re.sub(r"\(", "", item, flags=re.A)
+                    # item = re.sub(r"\)", "", item, flags=re.A)
                     # print(if_except, if_include,  "----------", item)
                     # if if_except:
                     #     if re.search(r"\d+\s+-\d+\s+", item, flags=re.A):
