@@ -20,6 +20,3 @@ def parse_schedule():
 
     except Exception as err:
         print(err, "\n")
-
-if __name__ == "__main__":
-    parse_schedule()

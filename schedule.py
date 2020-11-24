@@ -10,7 +10,8 @@ days_of_week = {
     3: 'Среда',
     4: 'Четверг',
     5: 'Пятница',
-    6: 'Суббота'
+    6: 'Суббота',
+    7: 'Воскресенье'
 }
 time_zone = None
 
@@ -27,7 +28,7 @@ def cur_week(today):
     return week
 
 def format_lesson(record, day_of_week, week, today):
-    formatted_str = days_of_week[day_of_week] + " " + str(today.day) + "." + str(today.month)
+    formatted_str = '\n' + days_of_week[day_of_week] + " " + str(today.day) + "." + str(today.month)
     for lesson in record:
         less = lesson[2] 
         if "кр." in less:
@@ -71,54 +72,46 @@ def return_one_day(today, group):
     week = cur_week(today)
     cursor = connect_to_sqlite()
     day_of_week = today.isocalendar()[2]
-    if(day_of_week!=7):
-        if (day_of_week%2):
-            current_week = 1
-        else:
-            current_week = 2
-        sqlite_select_Query = "SELECT schedule_calls.call_id, lessons.call_time, discipline_name, room_num, teacher_name  \
-                            FROM lessons\
-                            Join disciplines ON discipline_id = discipline\
-                            Join schedule_calls ON call_id = call_num\
-                            Join rooms On room_id = room\
-                            JOIN teachers On teacher = teacher_id\
-                            JOIN groups on group_id = group_num\
-                            WHERE groups.group_name = :group AND day = :day AND week = :week \
-                            order by schedule_calls.call_id"
-        cursor.execute(sqlite_select_Query, {'group':group, 'day':day_of_week, 'week':current_week})
-        record = cursor.fetchall()
-
-        print(record, day_of_week, current_week)
-
-        if len(record):
-            return format_lesson(record, day_of_week, week, today)
-    return days_of_week[day_of_week] + " " + str(today.day) + "." + str(today.month) + "\nНет пар\n" + "="*30
+    if(day_of_week==7):
+        return ""
+    if (week%2):
+        current_week = 1
+    else:
+        current_week = 2
+    sqlite_select_Query = "SELECT schedule_calls.call_id, lessons.call_time, discipline_name, room_num, teacher_name  \
+                        FROM lessons\
+                        Join disciplines ON discipline_id = discipline\
+                        Join schedule_calls ON call_id = call_num\
+                        Join rooms On room_id = room\
+                        JOIN teachers On teacher = teacher_id\
+                        JOIN groups on group_id = group_num\
+                        WHERE groups.group_name = :group AND day = :day AND week = :week \
+                        order by schedule_calls.call_id"
+    cursor.execute(sqlite_select_Query, {'group':group, 'day':day_of_week, 'week':current_week})
+    record = cursor.fetchall()
+    cursor.close()
+    if len(record):
+        return format_lesson(record, day_of_week, week, today)
+    return '\n' + days_of_week[day_of_week] + " " + str(today.day) + "." + str(today.month) + "\nНет пар\n" + "="*30
 
 
 def today_sch(group):
-    today = datetime.now(tz=time_zone)- dt.timedelta(days=6)
-    formatted_str = "="*30 + "\n"
+    today = datetime.now(tz=time_zone)
+    formatted_str = "="*30
     return formatted_str + return_one_day(today, group)
     
 def tomorrow_sch(group): 
     today = datetime.now(tz=time_zone) + dt.timedelta(days=1)
-    formatted_str = "="*30 + "\n"
+    formatted_str = "="*30
     return formatted_str + return_one_day(today, group)
 
 def week_sch(group): 
     res = ""
-    formatted_str = "="*30 + "\n"
-    for i in range(7):
-        today = datetime.now(tz=time_zone) + dt.timedelta(days=i)
+    today = datetime.now(tz=time_zone)
+    day_of_week = today.isocalendar()[2]
+    formatted_str = "="*30
+    for i in range(6):
+        today = datetime.now(tz=time_zone) + dt.timedelta(days=i-day_of_week+1)
         formatted_str += return_one_day(today, group)
     return formatted_str
 
-
-
-
-# print(today_sch('ИНБО-04-18'))
-print(today_sch('ИНБО-04-18'))
-# print(today_sch('ИКБО-10-19'))
-#print(tomorrow_sch('ИКБО-07-18'))
-
-#print(week_sch('ИНБО-04-18'))
